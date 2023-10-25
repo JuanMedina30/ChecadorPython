@@ -1,3 +1,5 @@
+QUERY DATABSE 
+
 create database ChecadorPython
 use ChecadorPython
 
@@ -18,5 +20,4 @@ Hora time,
 Fecha date
 )
 
-texto ejemplo modificado 2  COITO HUJOS DE PUTAAAA Mamahuevo aaaaa
-TEXTO ejemplo
+Nota: La conexion con sql aun no ha sido establecida

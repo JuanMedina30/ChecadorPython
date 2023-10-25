@@ -26,7 +26,7 @@ a=True
 Empleados=[]
 Matriculas=[]
 Registros=[]
-MAMARRE=[]
+
 #Aqui se estan añadiendo los datos de la base de datos
 cursor=conector.cursor()
 cursor.execute("SELECT * FROM Empleado")
@@ -161,19 +161,32 @@ def ModificarEmpleado():
     print("Modificar datos empleado")
     print("-----------------------")
     x=int(input("Ingrese la posición del dato a eliminar"))
+    cursorM=conector.cursor()
     Matricula=int(input("Ingrese la matrícula: "))
     NombreEmpleado=input("Ingrese el  nombre(s): ")
     ApellidoPEmpleado=input("Ingrese el apellido paterno: ")
     ApellidoMEmpleado=input("Ingrese el apellido materno: ")   
     Rfc=input("Ingrese rfc: ") 
-    Teléfono =int(input	("Ingrese el teléfono: ")) 
+    Telefono =int(input	("Ingrese el teléfono: ")) 
     Puesto=input("Ingrese el puesto: ")
     Salario= float(input("Ingrese el salario: "))
-    RegistroEmpleado=(Matricula,NombreEmpleado,ApellidoPEmpleado,ApellidoMEmpleado,Rfc,Teléfono,Puesto,Salario)
-    Empleados.insert(x,RegistroEmpleado)
-    Matriculas.insert(x,x+1)
-    Matriculas.pop(x+1)
-    Empleados.pop(x+1)
+    modificar1="UPDATE Empleado set Matricula =? where id=?;"
+    modificar2="UPDATE Empleado set NombreEmpleado =? where id=?;"
+    modificar3="UPDATE Empleado set ApeelidoP =? where id=?;"
+    modificar4="UPDATE Empleado set ApeelidoM =? where id=?;"
+    modificar5="UPDATE Empleado set RFC =? where id=?;"
+    modificar6="UPDATE Empleado set Telefono =? where id=?;"
+    modificar7="UPDATE Empleado set Puesto =? where id=?;"
+    modificar8="UPDATE Empleado set Salario =? where id=?;"
+    cursorM.execute(modificar1, Matricula ,x)
+    cursorM.execute(modificar2, ''+NombreEmpleado+'',x)
+    cursorM.execute(modificar3, ''+ApellidoPEmpleado+'',x)
+    cursorM.execute(modificar4, ''+ApellidoMEmpleado+'',x)
+    cursorM.execute(modificar5, ''+Rfc+'',x)
+    cursorM.execute(modificar6, Telefono,x)
+    cursorM.execute(modificar7, ''+Puesto+'',x)
+    cursorM.execute(modificar8, Salario,x)
+    
     print("Registro modificado")
     msvcrt.getch()  
 
@@ -183,18 +196,23 @@ def EliminarEmpleado():
     print("1.- Elminar por índice")
     print("2.- Elimnar todos los datos")
     print("---------------------")
+    cursorE=conector.cursor()
     x= int(input("Seleccione una opción"))
+    cursorE=conector.cursor()
     if 1==x:
         os.system("cls")
         y=int(input("Ingrese el índice del empleado a eliminar"))
-        registroEliminado=Empleados[y]
-        Empleados.pop(y)
-        print(f"Registro {registroEliminado} ha sido eliminado")
+        eliminar="DELETE FROM Empleado where id=?"
+        cursorE.execute(eliminar,y)
+        print(f"Registro {eliminar} ha sido eliminado")
+        print("Presione cualquer tecla para continuar")
         msvcrt.getch()
     elif 2==x:
         os.system("cls")
-        Empleados.clear()
-        print("Todos los empleados han sido eliminado")
+        eliminar2="DELETE FROM Empleado"
+        cursorE.execute(eliminar2)
+        print("Todos los registros han sido eliminado")
+        print("Presione cualquer tecla para continuar")
         msvcrt.getch()
     else:
         print("Seleccione una opción válida")
