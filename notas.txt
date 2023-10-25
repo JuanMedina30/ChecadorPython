@@ -17,3 +17,5 @@ MatriculaEmp int,
 Hora time,
 Fecha date
 )
+
+texto ejemplo
