@@ -8,7 +8,7 @@ a=True
 Empleados=[]
 Matriculas=[]
 Registros=[]
-
+jUAN=[]
 def RegistarAsistencia():
     os.system("cls")
     print("Registrar asistencia")

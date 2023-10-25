@@ -26,7 +26,7 @@ a=True
 Empleados=[]
 Matriculas=[]
 Registros=[]
-
+MAMARRE=[]
 #Aqui se estan añadiendo los datos de la base de datos
 cursor=conector.cursor()
 cursor.execute("SELECT * FROM Empleado")
