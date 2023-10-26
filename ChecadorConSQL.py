@@ -7,10 +7,10 @@ import pandas as pd
 
 #Conexion a SQL server
 
-server='JuanMedina'#El nombre del servidor
-bd='ChecadorPython'#El nombre de la base de datos
+server='JUANMEDINA\SQLEXPRESS'#El nombre del servidor
+bd='ChecadorPython1'#El nombre de la base de datos
 #Aqui se creo un usuario para acceder a SQL server, asi mismo el usuario se crea desde SQL
-user='User' #Usuario creado
+user='User'#Usuario creado
 password='admin'#Contraseña creado
 
 #La conexion puede llegar a fallar, por eso se le complementa con un try
