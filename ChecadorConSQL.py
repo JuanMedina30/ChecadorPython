@@ -7,8 +7,9 @@ import pandas as pd
 
 #Conexion a SQL server
 
-server='JUANMEDINA\SQLEXPRESS'#El nombre del servidor
-bd='ChecadorPython1'#El nombre de la base de datos
+#server='JUANMEDINA\SQLEXPRESS'#El nombre del servidor
+server='JUANMEDINA'#El nombre del servidor
+bd='ChecadorPython'#El nombre de la base de datos
 #Aqui se creo un usuario para acceder a SQL server, asi mismo el usuario se crea desde SQL
 user='User'#Usuario creado
 password='admin'#Contraseña creado
@@ -18,7 +19,7 @@ try:
     #Codigo que funge como conector, en el mismo se llama a un "driver"
     #conector = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+bd+';UID='+user+';PWD='+ password)
     conector = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+bd+';UID='+user+';PWD='+password+';TrustServerCertificate=yes')
-    print("Conexion exitosa")#Mensaje a desplegar si la conexion fue exitosa
+    #print("Conexion exitosa")#Mensaje a desplegar si la conexion fue exitosa
 except Exception as e:
     print(f"La conexion ha fallado. Error: {e}") 
 
@@ -29,13 +30,13 @@ Matriculas=[]
 Registros=[]
 
 #Aqui se estan añadiendo los datos de la base de datos
-#cursor=conector.cursor()
-#cursor.execute("SELECT * FROM Empleado")
-#Empleados=cursor.fetchall() 
-#cursor.execute("SELECT * FROM Asistencia")
-#Registros=cursor.fetchall()
-#cursor.execute("SELECT Matricula from Empleado")
-#Matriculas=cursor.fetchall()
+cursor=conector.cursor()
+cursor.execute("SELECT * FROM Empleado")
+Empleados=cursor.fetchall() 
+cursor.execute("SELECT * FROM Asistencia")
+Registros=cursor.fetchall()
+cursor.execute("SELECT Matricula from Empleado")
+Matriculas=cursor.fetchall()
 
 
 def RegistarAsistencia():
@@ -48,33 +49,34 @@ def RegistarAsistencia():
     if i in Matriculas:
         Matricula=temp
         Hora=datetime.now().strftime('%H:%M')
-        Fecha=datetime.now().strftime('%d-%m-%Y')
-        RegistroAsistencia=(Matricula,Hora,Fecha)
+        Fecha=datetime.now().strftime('%m-%d-%Y')
         insert="INSERT INTO Asistencia (Matricula, Hora, Fecha) values (?,?,?); "
-        Registros.append(RegistroAsistencia)
         cursorI.execute(insert,+Matricula+''+Hora+'',+Fecha)
         print("Asistencia registrada")
         print("Presione cualquer tecla para continuar")
         msvcrt.getch()
+        cursorI.commit()
     else:
         print("El empleado no existe")
         print("Presione cualquer tecla para continuar")
         msvcrt.getch()
-
+    cursorI.close()
 
 def ConsultarAsistencia():
     print("Consultar asistencia")
     print("-------------------")
     print("Empleados registrados")
-    cursorC=conector.cursor()
-    cursorC.execute("SELECT * Asistencia")
-    Registros=cursorC.fetchall
+    cursorC=conector.cursor()        
+    cursorC.execute("SELECT * FROM Asistencia")
+    Registros=cursorC.fetchall() 
+    cursorC.execute                   
     print(Registros)
-    for y in Registros:
-        print(y)
+    #for y in Registros:
+     #   print(y)
     print("Presione cualquer tecla para continuar")
     msvcrt.getch()
-    cursorC.close()    
+    cursorC.close()  
+
     
 def ModificarAsistencia():
     print("Modificar registro de asistencia")
@@ -83,13 +85,10 @@ def ModificarAsistencia():
     cursorM=conector.cursor()
 
     if x in Matriculas:
-        Matricula=int(input("Ingrese su matrícula: "))
         Hora=input("Ingrese la hora 00:00: ")
-        Fecha=input("Ingresa la fecha (dd-mm-yyyy): ")
-        modificar1="UPDATE Asistencia set Matricula =? where id=?;"
-        modificar2="UPDATE Asistencia set Hora =? where id=?;"
-        modificar3="UPDATE Asistencia set Fecha =? where id=?;"
-        cursorM.execute(modificar1, ''+Matricula+'',x)
+        Fecha=input("Ingresa la fecha (mm-dd-yyyy): ")
+        modificar2="UPDATE Asistencia set Hora =? where MatriculaEmp=?;"
+        modificar3="UPDATE Asistencia set Fecha =? where MatriculaEmp=?;"
         cursorM.execute(modificar2, ''+Hora+'',x)
         cursorM.execute(modificar3, ''+Fecha+'',x)
         print("Registro modificado")
@@ -117,6 +116,7 @@ def EliminarAsistencia():
         cursorE.execute(eliminar,y)
         print(f"Registro {eliminar} ha sido eliminado")
         print("Presione cualquer tecla para continuar")
+        cursorE.commit()
         msvcrt.getch()
     elif 2==x:
         os.system("cls")
@@ -125,9 +125,11 @@ def EliminarAsistencia():
         print("Todos los registros han sido eliminado")
         print("Presione cualquer tecla para continuar")
         msvcrt.getch()
+        cursorE.commit()
     else:
         print("Seleccione una opción válida")
         msvcrt.getch()
+    cursorE.close()
 
 def AgregarEmpleado():
     print("Agregar empleado")
@@ -143,9 +145,9 @@ def AgregarEmpleado():
     Puesto=input("Ingrese el puesto: ")
     Salario= float(input("Ingrese el salario: "))
     insert="INSERT INTO Empleado (Matricula,NombreEmpleado,ApellidoP,ApellidoM,RFC,Telefono,Puesto,Salario) values (?,?,?,?,?,?,?,?);"
-    #cursorA.execute(insert,+Matricula+ ,''+NombreEmpleado+'',+''ApellidoPEmpleado+'',+''ApellidoMEmpleado''+ ,+''Rfc''+,+Telefono+,+''Puesto''+,+Salario )#Se junta el cursor con la ejecución
-    cursorA.execute(insert, (Matricula, NombreEmpleado, ApellidoPEmpleado, ApellidoMEmpleado, Rfc, Telefono, Puesto,Salario))
-
+    cursorA.execute(insert,Matricula ,''+NombreEmpleado+'',''+ApellidoPEmpleado+'',''+ApellidoMEmpleado+'' ,''+Rfc+'',Telefono,''+Puesto+'',Salario )#Se junta el cursor con la ejecución
+    cursorA.commit()
+    cursorA.close()
     print("Empleado agregado")
     print("Presione cualquer tecla para continuar")
     msvcrt.getch()  
@@ -154,16 +156,21 @@ def ConsularEmpleado():
     print("Consultar empleado")
     print("-------------------")
     print("Empleados registrados")
+    cursorC=conector.cursor()        
+    cursorC.execute("SELECT * FROM Empleado")
+    Empleados=cursorC.fetchall() 
+    cursorC.execute                       
     print(Empleados)
     msvcrt.getch()  
     print("Presione cualquer tecla para continuar")
+    cursorC.close()
+
   
 def ModificarEmpleado():
     print("Modificar datos empleado")
     print("-----------------------")
-    x=int(input("Ingrese la posición del dato a eliminar"))
+    x=int(input("Ingrese la posición del dato a modificar: "))
     cursorM=conector.cursor()
-    Matricula=int(input("Ingrese la matrícula: "))
     NombreEmpleado=input("Ingrese el  nombre(s): ")
     ApellidoPEmpleado=input("Ingrese el apellido paterno: ")
     ApellidoMEmpleado=input("Ingrese el apellido materno: ")   
@@ -171,15 +178,13 @@ def ModificarEmpleado():
     Telefono =int(input	("Ingrese el teléfono: ")) 
     Puesto=input("Ingrese el puesto: ")
     Salario= float(input("Ingrese el salario: "))
-    modificar1="UPDATE Empleado set Matricula =? where id=?;"
-    modificar2="UPDATE Empleado set NombreEmpleado =? where id=?;"
-    modificar3="UPDATE Empleado set ApeelidoP =? where id=?;"
-    modificar4="UPDATE Empleado set ApeelidoM =? where id=?;"
-    modificar5="UPDATE Empleado set RFC =? where id=?;"
-    modificar6="UPDATE Empleado set Telefono =? where id=?;"
-    modificar7="UPDATE Empleado set Puesto =? where id=?;"
-    modificar8="UPDATE Empleado set Salario =? where id=?;"
-    cursorM.execute(modificar1, Matricula ,x)
+    modificar2="UPDATE Empleado set NombreEmpleado =? where Matricula=?;"
+    modificar3="UPDATE Empleado set ApellidoP =? where Matricula=?;"
+    modificar4="UPDATE Empleado set ApellidoM =? where Matricula=?;"
+    modificar5="UPDATE Empleado set RFC =? where Matricula=?;"
+    modificar6="UPDATE Empleado set Telefono =? where Matricula=?;"
+    modificar7="UPDATE Empleado set Puesto =? where Matricula=?;"
+    modificar8="UPDATE Empleado set Salario =? where Matricula=?;"
     cursorM.execute(modificar2, ''+NombreEmpleado+'',x)
     cursorM.execute(modificar3, ''+ApellidoPEmpleado+'',x)
     cursorM.execute(modificar4, ''+ApellidoMEmpleado+'',x)
@@ -187,7 +192,8 @@ def ModificarEmpleado():
     cursorM.execute(modificar6, Telefono,x)
     cursorM.execute(modificar7, ''+Puesto+'',x)
     cursorM.execute(modificar8, Salario,x)
-    
+    cursorM.commit()
+    cursorM.close()
     print("Registro modificado")
     msvcrt.getch()  
 
@@ -208,6 +214,7 @@ def EliminarEmpleado():
         print(f"Registro {eliminar} ha sido eliminado")
         print("Presione cualquer tecla para continuar")
         msvcrt.getch()
+        cursorE.commit()
     elif 2==x:
         os.system("cls")
         eliminar2="DELETE FROM Empleado"
@@ -215,10 +222,11 @@ def EliminarEmpleado():
         print("Todos los registros han sido eliminado")
         print("Presione cualquer tecla para continuar")
         msvcrt.getch()
+        cursorE.commit()
     else:
         print("Seleccione una opción válida")
         msvcrt.getch()
-
+    cursorE.close()
 #"Main" del programa
 while True: #El bucle, que determinará hacía dónde se movera el usuario, ademas de finalizar el programa
     try:#En caso de que el usuario no selecciona una opcion válida, o ingrese un valor no admitible
@@ -239,8 +247,8 @@ while True: #El bucle, que determinará hacía dónde se movera el usuario, adem
 
             if opc== 1:
                 RegistarAsistencia()
-            elif opc== 2:                           
-                ConsultarAsistencia()    
+            elif opc== 2:           
+                ConsultarAsistencia()  
             elif opc==3:
                 tamaño=len(Registros)#Aqui esta comprando el tamaño del arreglo
                 if tamaño==0:#Si es 0(no tiene ningún valor) no te llamará a la función modificar
