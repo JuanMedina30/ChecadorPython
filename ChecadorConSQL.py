@@ -10,13 +10,14 @@ import pandas as pd
 server='JuanMedina'#El nombre del servidor
 bd='ChecadorPython'#El nombre de la base de datos
 #Aqui se creo un usuario para acceder a SQL server, asi mismo el usuario se crea desde SQL
-user='Usuario' #Usuario creado
+user='User' #Usuario creado
 password='admin'#Contraseña creado
 
 #La conexion puede llegar a fallar, por eso se le complementa con un try
 try:
     #Codigo que funge como conector, en el mismo se llama a un "driver"
-    conector = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+bd+';UID='+user+';PWD='+ password)
+    #conector = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+bd+';UID='+user+';PWD='+ password)
+    conector = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+bd+';UID='+user+';PWD='+password+';TrustServerCertificate=yes')
     print("Conexion exitosa")#Mensaje a desplegar si la conexion fue exitosa
 except Exception as e:
     print(f"La conexion ha fallado. Error: {e}") 
@@ -28,13 +29,13 @@ Matriculas=[]
 Registros=[]
 
 #Aqui se estan añadiendo los datos de la base de datos
-cursor=conector.cursor()
-cursor.execute("SELECT * FROM Empleado")
-Empleados=cursor.fetchall() 
-cursor.execute("SELECT * FROM Asistencia")
-Registros=cursor.fetchall()
-cursor.execute("SELECT Matricula from Empleado")
-Matriculas=cursor.fetchall()
+#cursor=conector.cursor()
+#cursor.execute("SELECT * FROM Empleado")
+#Empleados=cursor.fetchall() 
+#cursor.execute("SELECT * FROM Asistencia")
+#Registros=cursor.fetchall()
+#cursor.execute("SELECT Matricula from Empleado")
+#Matriculas=cursor.fetchall()
 
 
 def RegistarAsistencia():
